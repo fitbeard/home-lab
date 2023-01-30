@@ -1,0 +1,18 @@
+MENU TITLE Rocky Linux Menu
+
+LABEL Main Menu
+        MENU LABEL Main Menu
+        KERNEL menu.c32
+        APPEND pxelinux.cfg/default
+
+LABEL Install Rocky 9 - Interactive
+        MENU Install Rocky 9 - Interactive
+        KERNEL rocky9/vmlinuz
+        APPEND initrd=rocky9/initrd.img inst.repo=http://10.13.55.1:8070/rocky9 ksdevice=bootif
+        IPAPPEND 2
+
+LABEL Install Rocky 8 - Interactive
+        MENU Install Rocky 8 - Interactive
+        KERNEL rocky8/vmlinuz
+        APPEND initrd=rocky8/initrd.img inst.repo=http://10.13.55.1:8070/rocky8 ksdevice=bootif
+        IPAPPEND 2
