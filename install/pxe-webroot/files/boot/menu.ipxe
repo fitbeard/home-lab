@@ -1,0 +1,162 @@
+#!ipxe
+
+# Variables are specified in boot.ipxe.cfg
+
+# Some menu defaults
+set menu-timeout 10000
+set submenu-timeout ${menu-timeout}
+isset ${menu-default} || set menu-default exit
+
+# Figure out if client is 64-bit capable
+cpuid --ext 29 && set arch x86_64 || set arch x86
+cpuid --ext 29 && set archb 64 || set archb 32
+cpuid --ext 29 && set archl x86_64 || set archl i386
+
+###################### MAIN MENU ####################################
+
+:start
+menu iPXE boot menu for ${manufacturer} ${product} (${archb}bit)
+item --gap --             ------------------------- Operating systems ------------------------------
+item --key r menu-rocky   Rocky Linux
+item --key u menu-ubuntu  Ubuntu
+item --gap --             ------------------------- Tools and utilities ----------------------------
+item --key p pxelinux     Load PXELinux menu (legacy BIOS)(TODO)
+item --gap --             ------------------------- Advanced options -------------------------------
+item --key c config       Configure settings
+item shell                Drop to iPXE shell
+item reboot               Reboot computer
+item
+item --key x exit         Exit iPXE and continue BIOS boot
+choose --timeout ${menu-timeout} --default ${menu-default} selected || goto cancel
+set menu-timeout 0
+goto ${selected}
+
+:cancel
+echo You cancelled the menu, dropping you to a shell
+
+:shell
+echo Type 'exit' to get the back to the menu
+shell
+set menu-timeout 0
+set submenu-timeout 0
+goto start
+
+:failed
+echo Booting failed, dropping to shell
+goto shell
+
+:reboot
+reboot
+
+:exit
+exit
+
+:config
+config
+goto start
+
+:back
+set submenu-timeout 0
+clear submenu-default
+goto start
+
+############ TOOLS MENU ############
+
+:pxelinux
+set 210:string ${tftp-url}
+chain ${210:string}pxelinux.0 || goto failed
+goto start
+
+############################ ROCKY MENU #########################
+
+:menu-rocky
+menu Rocky Linux
+item rocky9-install-kickstart   Install Rocky 9 | Kickstart
+item rocky9-install-interactive Install Rocky 9 | Interactive
+item rocky8-install-kickstart   Install Rocky 8 | Kickstart
+item rocky8-install-interactive Install Rocky 8 | Interactive
+item
+item --key 0x08 back      Back to top menu...
+iseq ${menu-default} menu-rocky && isset ${submenu-default} && goto menu-rocky-timed ||
+choose selected && goto ${selected} || goto start
+:menu-rocky-timed
+choose --timeout ${submenu-timeout} --default ${submenu-default} selected && goto ${selected} || goto start
+
+:rocky9-install-kickstart
+echo Starting Rocky Linux 9 ${archl} kickstart installer for ${mac:hexraw}
+set base-url ${web-url}/rocky9
+kernel ${base-url}/images/pxeboot/vmlinuz inst.ks=${unattended-url}/rocky9-mac-${mac:hexraw}.cfg inst.stage2=${base-url}/ initrd=initrd.img ksdevice=bootif
+initrd ${base-url}/images/pxeboot/initrd.img
+boot || goto failed
+goto start
+
+:rocky9-install-interactive
+echo Starting Rocky Linux 9 ${archl} interactive installer for ${mac:hexraw}
+set base-url ${web-url}/rocky9
+kernel ${base-url}/images/pxeboot/vmlinuz inst.repo=${base-url}/ initrd=initrd.img ksdevice=bootif
+initrd ${base-url}/images/pxeboot/initrd.img
+boot || goto failed
+goto start
+
+:rocky8-install-kickstart
+echo Starting Rocky Linux 8 ${archl} kickstart installer for ${mac:hexraw}
+set base-url ${web-url}/rocky8
+kernel ${base-url}/images/pxeboot/vmlinuz inst.ks=${unattended-url}/rocky8-mac-${mac:hexraw}.cfg inst.stage2=${base-url}/ initrd=initrd.img ksdevice=bootif
+initrd ${base-url}/images/pxeboot/initrd.img
+boot || goto failed
+goto start
+
+:rocky8-install-interactive
+echo Starting Rocky Linux 8 ${archl} interactive installer for ${mac:hexraw}
+set base-url ${web-url}/rocky8
+kernel ${base-url}/images/pxeboot/vmlinuz inst.repo=${base-url}/ initrd=initrd.img ksdevice=bootif
+initrd ${base-url}/images/pxeboot/initrd.img
+boot || goto failed
+goto start
+
+############################ UBUNTU MENU #########################
+
+:menu-ubuntu
+menu Ubuntu
+item ubuntu2204-install-cloudinit   Install Ubuntu 22.04 | Cloud-Init
+item ubuntu2204-install-interactive Install Ubuntu 22.04 | Interactive
+item ubuntu2004-install-cloudinit   Install Ubuntu 20.04 | Cloud-Init
+item ubuntu2004-install-interactive Install Ubuntu 20.04 | Interactive
+item
+item --key 0x08 back      Back to top menu...
+iseq ${menu-default} menu-ubuntu && isset ${submenu-default} && goto menu-ubuntu-timed ||
+choose selected && goto ${selected} || goto start
+:menu-ubuntu-timed
+choose --timeout ${submenu-timeout} --default ${submenu-default} selected && goto ${selected} || goto start
+
+:ubuntu2204-install-cloudinit
+echo Starting Ubuntu 22.04 ${archl} cloudinit installer for ${mac:hexraw}
+set base-url ${web-url}/ubuntu/2204
+kernel ${base-url}/vmlinuz ip=dhcp url=${base-url}/ubuntu-22.04.1-live-server-amd64.iso initrd=initrd root=/dev/ram0 cloud-config-url=/dev/null fsck.mode=skip autoinstall ds=nocloud-net;s=${unattended-url}/ubuntu2204-mac-${mac:hexraw}/
+initrd ${base-url}/initrd
+boot || goto failed
+goto start
+
+:ubuntu2204-install-interactive
+echo Starting Ubuntu 22.04 ${archl} interactive installer for ${mac:hexraw}
+set base-url ${web-url}/ubuntu/2204
+kernel ${base-url}/vmlinuz ip=dhcp url=${base-url}/ubuntu-22.04.1-live-server-amd64.iso initrd=initrd root=/dev/ram0 cloud-config-url=/dev/null fsck.mode=skip
+initrd ${base-url}/initrd
+boot || goto failed
+goto start
+
+:ubuntu2004-install-cloudinit
+echo Starting Ubuntu 20.04 ${archl} cloudinit installer for ${mac:hexraw}
+set base-url ${web-url}/ubuntu/2004
+kernel ${base-url}/vmlinuz ip=dhcp url=${base-url}/ubuntu-20.04.5-live-server-amd64.iso initrd=initrd root=/dev/ram0 cloud-config-url=/dev/null fsck.mode=skip autoinstall ds=nocloud-net;s=${unattended-url}/ubuntu2004-mac-${mac:hexraw}/
+initrd ${base-url}/initrd
+boot || goto failed
+goto start
+
+:ubuntu2004-install-interactive
+echo Starting Ubuntu 20.04 ${archl} interactive installer for ${mac:hexraw}
+set base-url ${web-url}/ubuntu/2004
+kernel ${base-url}/vmlinuz ip=dhcp url=${base-url}/ubuntu-20.04.5-live-server-amd64.iso initrd=initrd root=/dev/ram0 cloud-config-url=/dev/null fsck.mode=skip
+initrd ${base-url}/initrd
+boot || goto failed
+goto start

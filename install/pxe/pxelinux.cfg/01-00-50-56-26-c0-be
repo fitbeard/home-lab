@@ -1,0 +1,27 @@
+default menu.c32
+prompt 0
+timeout 300
+ONTIMEOUT local
+
+menu title ########## PXE Boot Menu ##########
+
+label local
+  menu label Boot from local drive
+  localboot 0xffff
+
+label 1
+  menu label Install Rocky 8
+  kernel rocky8/vmlinuz
+  append initrd=rocky8/initrd.img inst.repo=http://10.13.55.1:8070/rocky8 ksdevice=bootif
+  ipappend 2
+
+label 2
+  menu label Install Rocky 9
+  kernel rocky9/vmlinuz
+  append initrd=rocky8/initrd.img inst.repo=http://10.13.55.1:8070/rocky9 ksdevice=bootif
+  ipappend 2
+
+label 3
+  menu label Install Ubuntu 20.04
+  kernel ubuntu2004/vmlinuz
+  append initrd=ubuntu2004/initrd url=http://10.13.55.210/ubuntu/2004/ubuntu-20.04.5-live-server-amd64.iso root=/dev/ram0 cloud-config-url=/dev/null

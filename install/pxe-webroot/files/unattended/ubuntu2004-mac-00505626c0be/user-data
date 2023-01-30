@@ -1,0 +1,173 @@
+#cloud-config
+autoinstall:
+  version: 1
+  refresh-installer:
+    update: true
+  timezone: UTC
+  apt:
+    disable_components: []
+    geoip: true
+    preserve_sources_list: false
+    primary:
+    - arches:
+      - amd64
+      - i386
+      uri: http://lt.archive.ubuntu.com/ubuntu
+    - arches:
+      - default
+      uri: http://ports.ubuntu.com/ubuntu-ports
+  drivers:
+    install: false
+  user-data:
+    hostname: ubuntu2004-pxe
+    ssh_pwauth: true
+    disable_root: false
+    chpasswd:
+      expire: false
+      users:
+        - name: root
+          type: hash
+          password: $6$5qn2ZEQsD3MxZo3x$bvdd1byLTaPBvntRJQqVTQoZPRAlosqUE.H/OsHAQqMguD8WkJnyPSU2o0qFRCtWD4XejOTXZIja44.AJ3cbA/
+    user: root
+# identity or user-data but not both should be used
+# password is password
+#  identity:
+#    hostname: ubuntu2204-pxe
+#    password: $6$5qn2ZEQsD3MxZo3x$bvdd1byLTaPBvntRJQqVTQoZPRAlosqUE.H/OsHAQqMguD8WkJnyPSU2o0qFRCtWD4XejOTXZIja44.AJ3cbA/
+#    realname: User
+#    username: ubuntu
+  kernel:
+    package: linux-generic
+  keyboard:
+    layout: us
+    toggle: null
+    variant: ''
+  locale: en_US.UTF-8
+  network:
+    version: 2
+    ethernets:
+      ens33:
+        critical: true
+        dhcp-identifier: mac
+        dhcp4: true
+  source:
+    id: synthesized
+    search_drivers: false
+  ssh:
+    allow-pw: true
+    authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCbLPUKIyJvy0LiGsGm0px640v8q9oYT71MZoYeHGnBWAx3/G4KdnPRKgcnbiPISj41kI3/NLRCoO5J0yaW7tIOu/iXT74aqWPR2ILyXZNzYqvgnK0P/R+rxYmDZ7C0UYYd8Usm7bysmJkV47Ou4y5nt+pxuqM+QQWp+31H2kcKodcvRw3FDPSWaxZCuwhDBVqhAtL8YXF4csuRR+gvJ/az9zTHgN1aCThr6lJsNomwf7+GJAYtpx9zbJtYthSN3WhI6oRugaOdelvQ7ij/iK1D7I2+Q/If+F+VGZSipQCGjIrnzvPjWT+YpOKUm1U8VG4c1OMyzUYGu13o3J3Yn5a/
+    install-server: true
+  updates: all
+  packages:
+    - bash-completion
+    - less
+    - net-tools
+    - rsyslog
+    - vim
+  late-commands:
+    - sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /target/etc/ssh/sshd_config
+#    - sed -i 's|^root:.:|root:$6$5qn2ZEQsD3MxZo3x$bvdd1byLTaPBvntRJQqVTQoZPRAlosqUE.H/OsHAQqMguD8WkJnyPSU2o0qFRCtWD4XejOTXZIja44.AJ3cbA/:|' /target/etc/shadow
+# disable netplan
+#    - rm -fr /target/etc/netplan/*
+    - rm -fr /target/usr/lib/systemd/system-generators/netplan
+    - chmod a-x /target/usr/sbin/netplan
+# re-enable netplan if needed (from installed system later)
+#    - ln -s /usr/lib/netplan/generate /usr/lib/systemd/system-generators/netplan
+#    - chmod a+x /usr/sbin/netplan
+#    - rm -fr /etc/resolv.conf
+#    - ln -s /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+    - rm -fr /target/etc/resolv.conf
+    - |
+      cat << EOF > /target/etc/resolv.conf
+      nameserver 10.13.55.1
+      EOF
+    - |
+      cat << EOF > /target/etc/systemd/network/01-mgmt.link
+      [Match]
+      #OriginalName=ens33
+      #MACAddress=00:50:56:26:c0:be
+      Path=pci-0000:02:01.0
+      
+      [Link]
+      Description=Management interface
+      Name=mgmt
+      EOF
+    - |
+      cat << EOF > /target/etc/systemd/network/02-mgmt.network
+      [Match]
+      Name=mgmt
+      
+      [Network]
+      #DHCP=yes
+      Address=10.13.55.42/24
+      Gateway=10.13.55.1
+      EOF
+    - curtin in-target --target=/target -- systemctl disable apparmor
+    - curtin in-target --target=/target -- systemctl disable ufw
+  storage:
+    config:
+    - ptable: gpt
+      path: /dev/sda
+      wipe: superblock
+      preserve: false
+      name: ''
+      grub_device: false
+      type: disk
+      id: disk-sda
+    - device: disk-sda
+      size: 512M
+      wipe: superblock
+      flag: boot
+      number: 1
+      preserve: false
+      grub_device: true
+      resize: true
+      type: partition
+      id: partition-1
+    - device: disk-sda
+      size: 2G
+      wipe: superblock
+      flag: swap
+      number: 2
+      preserve: false
+      grub_device: false
+      type: partition
+      id: partition-2
+    - fstype: swap
+      volume: partition-2
+      preserve: false
+      type: format
+      id: format-3
+    - path: ''
+      device: format-3
+      type: mount
+      id: mount-2
+    - fstype: fat32
+      volume: partition-1
+      preserve: false
+      type: format
+      id: format-4
+    - device: disk-sda
+      size: -1
+      wipe: superblock
+      number: 3
+      preserve: false
+      grub_device: false
+      type: partition
+      id: partition-3
+    - fstype: ext4
+      volume: partition-3
+      preserve: false
+      type: format
+      id: format-5
+    - path: /
+      device: format-5
+      type: mount
+      id: mount-4
+    - path: /boot/efi
+      device: format-4
+      type: mount
+      id: mount-3
+    swap:
+      size: 0

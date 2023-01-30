@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  pxe:
+    image: httpd:2.4-alpine
+    container_name: pxe
+    restart: always
+    network_mode: host
+    volumes:
+      - ./httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+      - ./pxe.conf:/usr/local/apache2/conf/pxe.conf:ro
+      - ./files:/var/pxe:ro
