@@ -20,7 +20,7 @@ item --gap --             ------------------------- Operating systems ----------
 item --key r menu-rocky   Rocky Linux
 item --key u menu-ubuntu  Ubuntu
 item --gap --             ------------------------- Tools and utilities ----------------------------
-item --key p pxelinux     Load PXELinux menu (legacy BIOS)(TODO)
+item --key p pxelinux     Load PXELinux menu (legacy BIOS)
 item --gap --             ------------------------- Advanced options -------------------------------
 item --key c config       Configure settings
 item shell                Drop to iPXE shell
