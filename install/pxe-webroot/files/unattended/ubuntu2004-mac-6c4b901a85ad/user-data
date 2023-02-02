@@ -93,7 +93,6 @@ autoinstall:
       EOF
     - curtin in-target --target=/target -- systemctl disable apparmor
     - curtin in-target --target=/target -- systemctl disable ufw
-    - curtin in-target --target=/target -- apt purge -y snapd
   storage:
     config:
     - ptable: gpt
