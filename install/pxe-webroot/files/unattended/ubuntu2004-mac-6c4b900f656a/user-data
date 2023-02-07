@@ -19,7 +19,10 @@ autoinstall:
   drivers:
     install: false
   user-data:
-    hostname: ubuntu2004-pxe
+    preserve_hostname: false
+    prefer_fqdn_over_hostname: true
+    hostname: node1
+    fqdn: node1.lab.bimbam.io
     ssh_pwauth: true
     disable_root: false
     chpasswd:
@@ -29,13 +32,6 @@ autoinstall:
           type: hash
           password: $6$5qn2ZEQsD3MxZo3x$bvdd1byLTaPBvntRJQqVTQoZPRAlosqUE.H/OsHAQqMguD8WkJnyPSU2o0qFRCtWD4XejOTXZIja44.AJ3cbA/
     user: root
-# identity or user-data but not both should be used
-# password is password
-#  identity:
-#    hostname: ubuntu2204-pxe
-#    password: $6$5qn2ZEQsD3MxZo3x$bvdd1byLTaPBvntRJQqVTQoZPRAlosqUE.H/OsHAQqMguD8WkJnyPSU2o0qFRCtWD4XejOTXZIja44.AJ3cbA/
-#    realname: User
-#    username: ubuntu
   kernel:
     package: linux-generic
   keyboard:
@@ -46,7 +42,7 @@ autoinstall:
   network:
     version: 2
     ethernets:
-      ens33:
+      enp0s31f6:
         critical: true
         dhcp-identifier: mac
         dhcp4: true
@@ -66,16 +62,8 @@ autoinstall:
     - vim
   late-commands:
     - sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /target/etc/ssh/sshd_config
-#    - sed -i 's|^root:.:|root:$6$5qn2ZEQsD3MxZo3x$bvdd1byLTaPBvntRJQqVTQoZPRAlosqUE.H/OsHAQqMguD8WkJnyPSU2o0qFRCtWD4XejOTXZIja44.AJ3cbA/:|' /target/etc/shadow
-# disable netplan
-#    - rm -fr /target/etc/netplan/*
     - rm -fr /target/usr/lib/systemd/system-generators/netplan
     - chmod a-x /target/usr/sbin/netplan
-# re-enable netplan if needed (from installed system later)
-#    - ln -s /usr/lib/netplan/generate /usr/lib/systemd/system-generators/netplan
-#    - chmod a+x /usr/sbin/netplan
-#    - rm -fr /etc/resolv.conf
-#    - ln -s /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
     - rm -fr /target/etc/resolv.conf
     - |
       cat << EOF > /target/etc/resolv.conf
@@ -84,9 +72,9 @@ autoinstall:
     - |
       cat << EOF > /target/etc/systemd/network/01-mgmt.link
       [Match]
-      #OriginalName=ens33
-      #MACAddress=00:50:56:26:c0:be
-      Path=pci-0000:02:01.0
+      #OriginalName=enp0s31f6
+      #MACAddress=6c:4b:90:0f:65:6a
+      Path=pci-0000:00:1f.6
       
       [Link]
       Description=Management interface
@@ -99,7 +87,7 @@ autoinstall:
       
       [Network]
       #DHCP=yes
-      Address=10.13.55.42/24
+      Address=10.13.55.181/24
       Gateway=10.13.55.1
       EOF
     - curtin in-target --target=/target -- systemctl disable apparmor
@@ -107,14 +95,14 @@ autoinstall:
   storage:
     config:
     - ptable: gpt
-      path: /dev/sda
+      path: /dev/nvme0n1
       wipe: superblock
       preserve: false
       name: ''
       grub_device: false
       type: disk
-      id: disk-sda
-    - device: disk-sda
+      id: disk-nvme0n1
+    - device: disk-nvme0n1
       size: 512M
       wipe: superblock
       flag: boot
@@ -123,8 +111,13 @@ autoinstall:
       grub_device: true
       resize: true
       type: partition
-      id: partition-1
-    - device: disk-sda
+      id: partition-0
+    - fstype: fat32
+      volume: partition-0
+      preserve: false
+      type: format
+      id: format-1
+    - device: disk-nvme0n1
       size: 2G
       wipe: superblock
       flag: swap
@@ -132,41 +125,36 @@ autoinstall:
       preserve: false
       grub_device: false
       type: partition
-      id: partition-2
+      id: partition-1
     - fstype: swap
-      volume: partition-2
-      preserve: false
-      type: format
-      id: format-3
-    - path: ''
-      device: format-3
-      type: mount
-      id: mount-2
-    - fstype: fat32
       volume: partition-1
       preserve: false
       type: format
-      id: format-4
-    - device: disk-sda
+      id: format-2
+    - path: ''
+      device: format-2
+      type: mount
+      id: mount-2
+    - device: disk-nvme0n1
       size: -1
       wipe: superblock
       number: 3
       preserve: false
       grub_device: false
       type: partition
-      id: partition-3
+      id: partition-2
     - fstype: ext4
-      volume: partition-3
+      volume: partition-2
       preserve: false
       type: format
-      id: format-5
+      id: format-3
     - path: /
-      device: format-5
-      type: mount
-      id: mount-4
-    - path: /boot/efi
-      device: format-4
+      device: format-3
       type: mount
       id: mount-3
+    - path: /boot/efi
+      device: format-1
+      type: mount
+      id: mount-1
     swap:
       size: 0
