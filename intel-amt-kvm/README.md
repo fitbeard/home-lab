@@ -8,7 +8,13 @@ As pointed out earlier only vPro CPUs such as i7, i5 and Xeon CPU support Intel 
 
 ![intel1](https://user-images.githubusercontent.com/18698204/215517189-8aafca43-92f6-4e9d-b239-f73b8d87f261.jpg)
 
-You must save setting in BIOS and restart the computer. Press CTRL+p to configure the Intel Management engine and AMT hardware KVM by login into MBEx. If AMT has never been set up on your server or desktop, use admin as password:
+You must save setting in BIOS and restart the computer. Press CTRL+p to configure the Intel Management engine and AMT hardware KVM by login into MBEx. If AMT has never been set up on your server or desktop, use admin as password and after that set the new one. The new password must respect:
+
+1. At least 8 characters
+2. One special character
+3. One number
+4. One capital letter
+5. One small letter
 
 ![intel2](https://user-images.githubusercontent.com/18698204/215518098-927cd9e0-5bae-4f3c-b650-81fb2a37d1c5.jpg)
 
