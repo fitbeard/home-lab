@@ -2,7 +2,7 @@
 autoinstall:
   version: 1
   refresh-installer:
-    update: true
+    update: false
   timezone: UTC
   apt:
     disable_components: []
