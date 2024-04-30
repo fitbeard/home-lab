@@ -13,14 +13,14 @@ mount -t iso9660 -o loop,ro files/ubuntu/2004/ubuntu-20.04.6-live-server-amd64.i
 cp /mnt/casper/vmlinuz files/ubuntu/2004/
 cp /mnt/casper/vmlinuz /var/tftp/ubuntu/2004/
 cp /mnt/casper/initrd files/ubuntu/2004/
-cp /mnt/casper/vmlinuz /var/tftp/ubuntu/2004/
+cp /mnt/casper/initrd /var/tftp/ubuntu/2004/
 umount /mnt
 
 mount -t iso9660 -o loop,ro files/ubuntu/2204/22.04.1/ubuntu-22.04.4-live-server-amd64.iso /mnt/
 cp /mnt/casper/vmlinuz files/ubuntu/2204/
 cp /mnt/casper/vmlinuz /var/tftp/ubuntu/2204/
 cp /mnt/casper/initrd files/ubuntu/2204/
-cp /mnt/casper/vmlinuz /var/tftp/ubuntu/2204/
+cp /mnt/casper/initrd /var/tftp/ubuntu/2204/
 umount /mnt
 
 wget https://download.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-x86_64-minimal.iso -O Rocky9-x86_64-minimal.iso
