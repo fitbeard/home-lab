@@ -1,22 +1,22 @@
-# pxe-weboort
+# pxe-webroot
 
 ```bash
 docker-compose up
 
-wget https://releases.ubuntu.com/20.04.5/ubuntu-20.04.5-live-server-amd64.iso
-wget https://releases.ubuntu.com/22.04.1/ubuntu-22.04.1-live-server-amd64.iso
+wget https://releases.ubuntu.com/20.04.6/ubuntu-20.04.6-live-server-amd64.iso
+wget https://releases.ubuntu.com/22.04.4/ubuntu-22.04.4-live-server-amd64.iso
 
-mv ubuntu-20.04.5-live-server-amd64.iso files/ubuntu/2004/
-mv ubuntu-22.04.1-live-server-amd64.iso files/ubuntu/2204/
+mv ubuntu-20.04.6-live-server-amd64.iso files/ubuntu/2004/
+mv ubuntu-22.04.4-live-server-amd64.iso files/ubuntu/2204/
 
-mount -t iso9660 -o loop,ro files/ubuntu/2004/ubuntu-20.04.5-live-server-amd64.iso /mnt/
+mount -t iso9660 -o loop,ro files/ubuntu/2004/ubuntu-20.04.6-live-server-amd64.iso /mnt/
 cp /mnt/casper/vmlinuz files/ubuntu/2004/
 cp /mnt/casper/vmlinuz /var/tftp/ubuntu/2004/
 cp /mnt/casper/initrd files/ubuntu/2004/
 cp /mnt/casper/vmlinuz /var/tftp/ubuntu/2004/
 umount /mnt
 
-mount -t iso9660 -o loop,ro files/ubuntu/2204/22.04.1/ubuntu-22.04.1-live-server-amd64.iso /mnt/
+mount -t iso9660 -o loop,ro files/ubuntu/2204/22.04.1/ubuntu-22.04.4-live-server-amd64.iso /mnt/
 cp /mnt/casper/vmlinuz files/ubuntu/2204/
 cp /mnt/casper/vmlinuz /var/tftp/ubuntu/2204/
 cp /mnt/casper/initrd files/ubuntu/2204/
