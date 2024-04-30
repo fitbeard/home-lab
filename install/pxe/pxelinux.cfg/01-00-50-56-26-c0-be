@@ -24,4 +24,4 @@ label 2
 label 3
   menu label Install Ubuntu 20.04
   kernel ubuntu2004/vmlinuz
-  append initrd=ubuntu2004/initrd url=http://10.13.55.210/ubuntu/2004/ubuntu-20.04.5-live-server-amd64.iso root=/dev/ram0 cloud-config-url=/dev/null
+  append initrd=ubuntu2004/initrd url=http://10.13.55.210/ubuntu/2004/ubuntu-20.04.6-live-server-amd64.iso root=/dev/ram0 cloud-config-url=/dev/null

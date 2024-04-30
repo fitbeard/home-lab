@@ -132,7 +132,7 @@ choose --timeout ${submenu-timeout} --default ${submenu-default} selected && got
 :ubuntu2204-install-cloudinit
 echo Starting Ubuntu 22.04 ${archl} cloudinit installer for ${mac:hexraw}
 set base-url ${web-url}/ubuntu/2204
-kernel ${base-url}/vmlinuz ip=dhcp url=${base-url}/ubuntu-22.04.1-live-server-amd64.iso initrd=initrd root=/dev/ram0 cloud-config-url=/dev/null fsck.mode=skip autoinstall ds=nocloud-net;s=${unattended-url}/ubuntu2204-mac-${mac:hexraw}/
+kernel ${base-url}/vmlinuz ip=dhcp url=${base-url}/ubuntu-22.04.4-live-server-amd64.iso initrd=initrd root=/dev/ram0 cloud-config-url=/dev/null fsck.mode=skip autoinstall ds=nocloud-net;s=${unattended-url}/ubuntu2204-mac-${mac:hexraw}/
 initrd ${base-url}/initrd
 boot || goto failed
 goto start
@@ -140,7 +140,7 @@ goto start
 :ubuntu2204-install-interactive
 echo Starting Ubuntu 22.04 ${archl} interactive installer for ${mac:hexraw}
 set base-url ${web-url}/ubuntu/2204
-kernel ${base-url}/vmlinuz ip=dhcp url=${base-url}/ubuntu-22.04.1-live-server-amd64.iso initrd=initrd root=/dev/ram0 cloud-config-url=/dev/null fsck.mode=skip
+kernel ${base-url}/vmlinuz ip=dhcp url=${base-url}/ubuntu-22.04.4-live-server-amd64.iso initrd=initrd root=/dev/ram0 cloud-config-url=/dev/null fsck.mode=skip
 initrd ${base-url}/initrd
 boot || goto failed
 goto start
@@ -148,7 +148,7 @@ goto start
 :ubuntu2004-install-cloudinit
 echo Starting Ubuntu 20.04 ${archl} cloudinit installer for ${mac:hexraw}
 set base-url ${web-url}/ubuntu/2004
-kernel ${base-url}/vmlinuz ip=dhcp url=${base-url}/ubuntu-20.04.5-live-server-amd64.iso initrd=initrd root=/dev/ram0 cloud-config-url=/dev/null fsck.mode=skip autoinstall ds=nocloud-net;s=${unattended-url}/ubuntu2004-mac-${mac:hexraw}/
+kernel ${base-url}/vmlinuz ip=dhcp url=${base-url}/ubuntu-20.04.6-live-server-amd64.iso initrd=initrd root=/dev/ram0 cloud-config-url=/dev/null fsck.mode=skip autoinstall ds=nocloud-net;s=${unattended-url}/ubuntu2004-mac-${mac:hexraw}/
 initrd ${base-url}/initrd
 boot || goto failed
 goto start
@@ -156,7 +156,7 @@ goto start
 :ubuntu2004-install-interactive
 echo Starting Ubuntu 20.04 ${archl} interactive installer for ${mac:hexraw}
 set base-url ${web-url}/ubuntu/2004
-kernel ${base-url}/vmlinuz ip=dhcp url=${base-url}/ubuntu-20.04.5-live-server-amd64.iso initrd=initrd root=/dev/ram0 cloud-config-url=/dev/null fsck.mode=skip
+kernel ${base-url}/vmlinuz ip=dhcp url=${base-url}/ubuntu-20.04.6-live-server-amd64.iso initrd=initrd root=/dev/ram0 cloud-config-url=/dev/null fsck.mode=skip
 initrd ${base-url}/initrd
 boot || goto failed
 goto start

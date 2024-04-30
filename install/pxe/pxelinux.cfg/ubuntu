@@ -8,9 +8,9 @@ LABEL Main Menu
 LABEL Install Ubuntu 22.04 - Interactive
         MENU Install Ubuntu 22.04 - Interactive
         KERNEL ubuntu/2204/vmlinuz
-        APPEND initrd=ubuntu/2204/initrd ip=dhcp url=http://10.13.55.210/ubuntu/2204/ubuntu-22.04.1-live-server-amd64.iso root=/dev/ram0 cloud-config-url=/dev/null
+        APPEND initrd=ubuntu/2204/initrd ip=dhcp url=http://10.13.55.210/ubuntu/2204/ubuntu-22.04.4-live-server-amd64.iso root=/dev/ram0 cloud-config-url=/dev/null
 
 LABEL Install Ubuntu 20.04 - Interactive
         MENU Install Ubuntu 20.04 - Interactive
         KERNEL ubuntu/2004/vmlinuz
-        APPEND initrd=ubuntu/2004/initrd ip=dhcp url=http://10.13.55.210/ubuntu/2004/ubuntu-20.04.5-live-server-amd64.iso root=/dev/ram0 cloud-config-url=/dev/null
+        APPEND initrd=ubuntu/2004/initrd ip=dhcp url=http://10.13.55.210/ubuntu/2004/ubuntu-20.04.6-live-server-amd64.iso root=/dev/ram0 cloud-config-url=/dev/null
