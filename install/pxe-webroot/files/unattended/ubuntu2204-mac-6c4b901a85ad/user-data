@@ -21,8 +21,8 @@ autoinstall:
   user-data:
     preserve_hostname: false
     prefer_fqdn_over_hostname: true
-    hostname: node3
-    fqdn: node3.lab.bimbam.io
+    hostname: compute3
+    fqdn: compute3.lab.bimbam.io
     ssh_pwauth: true
     disable_root: false
     chpasswd:
