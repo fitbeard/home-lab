@@ -3,6 +3,7 @@
 ## build
 
 ```bash
+/usr/local/bin/packer init rocky9.pkr.hcl
 PACKER_LOG=1 /usr/local/bin/packer build -force rocky9.pkr.hcl
 ```
 
