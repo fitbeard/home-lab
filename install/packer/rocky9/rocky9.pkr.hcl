@@ -111,7 +111,7 @@ source "qemu" "rocky9" {
   qemu_binary        = "/usr/libexec/qemu-kvm"
   cpu_model          = "host"
   machine_type       = "q35"
-  # shutdown_command   = "/sbin/shutdown -hP now" # On QEMU 8.2 and Packer 1.11.2 Rocky Linux 9 shutdown step freezes. Doing force shutdown here.
+  # shutdown_command   = "/sbin/shutdown -hP now" # Doing force shutdown here.
   skip_compaction    = "false"
   ssh_password       = "${var.ssh_password}"
   ssh_timeout        = "20m"
